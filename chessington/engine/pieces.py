@@ -30,6 +30,13 @@ class Piece(ABC):
         board.move_piece(current_square, new_square)
         self.has_moved = True
 
+    def _is_capturable(self, board, square):
+        return (
+            board.square_in_bounds(square) and 
+            board.square_is_occupied(square) and 
+            board.get_piece(square).player != self.player
+        )
+
 
 class Pawn(Piece):
     """
@@ -42,13 +49,19 @@ class Pawn(Piece):
         
         single_move_square = Square.at(location.row + delta, location.col)
         double_move_square = Square.at(location.row + 2 * delta, location.col)
-
+        
+        normal_moves = []
         if not board.square_in_bounds(single_move_square) or board.square_is_occupied(single_move_square):
-            return []
+            normal_moves = []
         elif self.has_moved or not board.square_in_bounds(double_move_square) or board.square_is_occupied(double_move_square):
-            return [single_move_square]
+            normal_moves = [single_move_square]
         else:
-            return [single_move_square, double_move_square]
+            normal_moves = [single_move_square, double_move_square]
+
+        capture_moves = [Square.at(location.row + delta, location.col + 1), Square.at(location.row + delta, location.col - 1)]
+        capture_moves = list(filter(lambda square: self._is_capturable(board, square), capture_moves))
+
+        return normal_moves + capture_moves
 
 
 class Knight(Piece):
