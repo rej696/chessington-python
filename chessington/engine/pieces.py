@@ -21,6 +21,13 @@ class Piece(ABC):
         """
         pass
 
+    def move_to(self, board, new_square):
+        """
+        Move this piece to the given square on the board.
+        """
+        current_square = board.find_piece(self)
+        board.move_piece(current_square, new_square)
+
 
 class Pawn(Piece):
     """
