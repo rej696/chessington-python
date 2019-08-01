@@ -30,6 +30,14 @@ class Piece(ABC):
         board.move_piece(current_square, new_square)
         self.has_moved = True
 
+    def _get_available_lateral_moves(self, board):
+        return (
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row + 1, s.col))) +
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row - 1, s.col))) +
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row, s.col + 1))) +
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row, s.col - 1)))
+        )
+
     def _get_available_diagonal_moves(self, board):
         return (
             list(self._available_moves_in_direction(board, lambda s: Square.at(s.row + 1, s.col + 1))) +
@@ -120,7 +128,7 @@ class Rook(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        return self._get_available_lateral_moves(board)
 
 
 class Queen(Piece):
