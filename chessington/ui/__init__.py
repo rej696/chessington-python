@@ -83,7 +83,7 @@ def play_game():
 
         # If making an allowed move, then make it
         if from_square is not None and any(s.row == row and s.col == col for s in to_squares):
-            clicked_piece.move_to(board, Square.at(row, col))
+            board.get_piece(from_square).move_to(board, Square.at(row, col))
             from_square, to_squares = None, []
 
         # If clicking on a piece whose turn it is, get its allowed moves
