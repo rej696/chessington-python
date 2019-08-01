@@ -30,12 +30,18 @@ class Piece(ABC):
         board.move_piece(current_square, new_square)
         self.has_moved = True
 
-    def _is_capturable(self, board, square):
+    def _is_free_or_capturable(self, board, square):
+        return board.square_in_bounds(square) and (board.square_is_empty(square) or self._is_piece_capturable(board.get_piece(square)))
+
+    def _is_square_capturable(self, board, square):
         return (
             board.square_in_bounds(square) and 
             board.square_is_occupied(square) and 
-            board.get_piece(square).player != self.player
+            self._is_piece_capturable(board.get_piece(square))
         )
+
+    def _is_piece_capturable(self, piece):
+        return piece.player != self.player
 
 
 class Pawn(Piece):
@@ -59,7 +65,7 @@ class Pawn(Piece):
             normal_moves = [single_move_square, double_move_square]
 
         capture_moves = [Square.at(location.row + delta, location.col + 1), Square.at(location.row + delta, location.col - 1)]
-        capture_moves = list(filter(lambda square: self._is_capturable(board, square), capture_moves))
+        capture_moves = list(filter(lambda square: self._is_square_capturable(board, square), capture_moves))
 
         return normal_moves + capture_moves
 
@@ -106,4 +112,13 @@ class King(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        location = board.find_piece(self)
+        row, col = location.row, location.col
+
+        candidate_moves = [
+            Square.at(row + 1, col + 1), Square.at(row + 1, col), Square.at(row + 1, col - 1),
+            Square.at(row, col + 1), Square.at(row, col - 1),
+            Square.at(row - 1, col + 1), Square.at(row - 1, col), Square.at(row - 1, col - 1)
+        ]
+
+        return list(filter(lambda square: self._is_free_or_capturable(board, square), candidate_moves))
