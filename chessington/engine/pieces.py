@@ -76,7 +76,17 @@ class Knight(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        location = board.find_piece(self)
+        row, col = location.row, location.col
+
+        candidate_moves = [
+            Square.at(row + 2, col + 1), Square.at(row + 2, col - 1), 
+            Square.at(row + 1, col + 2), Square.at(row + 1, col - 2),
+            Square.at(row - 2, col + 1), Square.at(row - 2, col - 1), 
+            Square.at(row - 1, col + 2), Square.at(row - 1, col - 2),
+        ]
+
+        return list(filter(lambda square: self._is_free_or_capturable(board, square), candidate_moves))
 
 
 class Bishop(Piece):
