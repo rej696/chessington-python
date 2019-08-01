@@ -28,7 +28,9 @@ class Pawn(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        location = board.find_piece(self)
+        delta = 1 if self.player == Player.WHITE else -1
+        return [Square.at(location.row + delta, location.col)]
 
 
 class Knight(Piece):
