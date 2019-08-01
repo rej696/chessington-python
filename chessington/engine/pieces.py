@@ -30,6 +30,22 @@ class Piece(ABC):
         board.move_piece(current_square, new_square)
         self.has_moved = True
 
+    def _get_available_diagonal_moves(self, board):
+        return (
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row + 1, s.col + 1))) +
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row + 1, s.col - 1))) +
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row - 1, s.col + 1))) +
+            list(self._available_moves_in_direction(board, lambda s: Square.at(s.row - 1, s.col - 1)))
+        )
+
+    def _available_moves_in_direction(self, board, direction_function):
+        next_square = direction_function(board.find_piece(self))
+        while self._is_free_or_capturable(board, next_square):
+            yield next_square
+            if board.square_is_occupied(next_square):
+                break
+            next_square = direction_function(next_square)
+
     def _is_free_or_capturable(self, board, square):
         return board.square_in_bounds(square) and (board.square_is_empty(square) or self._is_piece_capturable(board.get_piece(square)))
 
@@ -95,7 +111,7 @@ class Bishop(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        return self._get_available_diagonal_moves(board)
 
 
 class Rook(Piece):
