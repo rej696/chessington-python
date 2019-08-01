@@ -80,6 +80,9 @@ class Board:
             self.set_piece(to_square, moving_piece)
             self.set_piece(from_square, None)
             self.current_player = self.current_player.opponent()
+    
+    def square_in_bounds(self, square):
+        return 0 <= square.row < BOARD_SIZE and 0 <= square.col < BOARD_SIZE
 
     def square_is_empty(self, square):
         return self.get_piece(square) is None

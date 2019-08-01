@@ -43,9 +43,9 @@ class Pawn(Piece):
         single_move_square = Square.at(location.row + delta, location.col)
         double_move_square = Square.at(location.row + 2 * delta, location.col)
 
-        if board.square_is_occupied(single_move_square):
+        if not board.square_in_bounds(single_move_square) or board.square_is_occupied(single_move_square):
             return []
-        elif self.has_moved or board.square_is_occupied(double_move_square):
+        elif self.has_moved or not board.square_in_bounds(double_move_square) or board.square_is_occupied(double_move_square):
             return [single_move_square]
         else:
             return [single_move_square, double_move_square]
