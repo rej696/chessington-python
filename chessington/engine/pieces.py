@@ -137,7 +137,7 @@ class Queen(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        return self._get_available_diagonal_moves(board) + self._get_available_lateral_moves(board)
 
 
 class King(Piece):
