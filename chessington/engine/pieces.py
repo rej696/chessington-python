@@ -43,10 +43,14 @@ class Pawn(Piece):
     def get_available_moves(self, board):
         current_square = self.position(board)
         directions = self.on_start_row(current_square)
-        next_squares = []
+        valid_moves = []
         for direction in directions:
-            next_squares.append(Square.at(current_square.row + direction, current_square.col))
-        return next_squares
+            next_square = Square.at(current_square.row + direction, current_square.col)
+            if board.is_square_empty(next_square):
+                valid_moves.append(next_square)
+            else:
+                return []
+        return valid_moves
 
     def on_start_row(self, current_square):
         if current_square.row == 1 or current_square.row == 6:
