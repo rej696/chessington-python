@@ -34,16 +34,26 @@ class Piece(ABC):
         """
         return board.find_piece(self)
 
+
 class Pawn(Piece):
     """
     A class representing a chess pawn.
     """
 
     def get_available_moves(self, board):
-        direction = 1 if self.player == Player.WHITE else -1
         current_square = self.position(board)
-        next_square = Square.at(current_square.row + direction, current_square.col)
-        return [next_square]
+        directions = self.on_start_row(current_square)
+        next_squares = []
+        for direction in directions:
+            next_squares.append(Square.at(current_square.row + direction, current_square.col))
+        return next_squares
+
+    def on_start_row(self, current_square):
+        if current_square.row == 1 or current_square.row == 6:
+            direction = [1, 2] if self.player == Player.WHITE else [-1, -2]
+        else:
+            direction = [1] if self.player == Player.WHITE else [-1]
+        return direction
 
 
 class Knight(Piece):
