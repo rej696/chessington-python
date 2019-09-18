@@ -34,6 +34,11 @@ class Piece(ABC):
         """
         return board.find_piece(self)
 
+    def edge_check(self, current_square):
+        if current_square.row == 7 or current_square.row == 0:
+            return []
+        return None
+
 
 class Pawn(Piece):
     """
@@ -42,7 +47,9 @@ class Pawn(Piece):
 
     def get_available_moves(self, board):
         current_square = self.position(board)
-        directions = self.on_start_row(current_square)
+        directions = self.edge_check(current_square)
+        if directions is None:
+            directions = self.on_start_row(current_square)
         valid_moves = []
         for direction in directions:
             next_square = Square.at(current_square.row + direction, current_square.col)
