@@ -3,8 +3,10 @@ Definitions of each of the different chess pieces.
 """
 
 from abc import ABC, abstractmethod
-
+import logging
 from chessington.engine.data import Player, Square
+logging.basicConfig(filename="pieces.log", filemode="w", level=logging.DEBUG)
+
 
 class Piece(ABC):
     """
@@ -34,11 +36,15 @@ class Piece(ABC):
         """
         return board.find_piece(self)
 
-    def edge_check(self, current_square):
+    def edge_check_row(self, current_square):
         if current_square.row == 7 or current_square.row == 0:
-            return []
-        return None
+            return True
+        return False
 
+    def edge_check_col(self, current_square):
+        if current_square.col == 7 or current_square.col == 0:
+            return True
+        return False
 
 class Pawn(Piece):
     """
@@ -47,16 +53,23 @@ class Pawn(Piece):
 
     def get_available_moves(self, board):
         current_square = self.position(board)
-        directions = self.edge_check(current_square)
-        if directions is None:
-            directions = self.on_start_row(current_square)
         valid_moves = []
-        for direction in directions:
-            next_square = Square.at(current_square.row + direction, current_square.col)
+        is_on_edge = self.edge_check_row(current_square)
+        ranges = []
+        if not is_on_edge:
+            ranges = self.on_start_row(current_square)
+            valid_moves = self.kill_opponent(current_square, board)
+            logging.info(f"{self.player} has {valid_moves} as valid moves for attacking")
+        else:
+            logging.info(f"{self.player} is on edge at {current_square}")
+        for location in ranges:
+            next_square = Square.at(current_square.row + location, current_square.col)
             if board.is_square_empty(next_square):
                 valid_moves.append(next_square)
             else:
-                return []
+                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+                return valid_moves
+        logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
         return valid_moves
 
     def on_start_row(self, current_square):
@@ -65,6 +78,24 @@ class Pawn(Piece):
         else:
             direction = [1] if self.player == Player.WHITE else [-1]
         return direction
+
+    def kill_opponent(self, current_square, board):
+        direction_row = 1 if self.player == Player.WHITE else -1
+        directions_col = []
+        if current_square.col == 0:
+            directions_col = [1]
+        if current_square.col == 7:
+            directions_col = [-1]
+        if not self.edge_check_col(current_square):
+            directions_col = [1, -1]
+        attack_squares = []
+        valid_attack_squares = []
+        for direction_col in directions_col:
+            attack_squares.append(Square.at(current_square.row + direction_row, current_square.col + direction_col))
+        for attack_square in attack_squares:
+            if board.is_square_attackable(attack_square, self.player):
+                valid_attack_squares.append(attack_square)
+        return valid_attack_squares
 
 
 class Knight(Piece):

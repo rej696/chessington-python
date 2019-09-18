@@ -17,7 +17,7 @@ class Board:
     """
 
     def __init__(self, player, board_state):
-        self.current_player = Player.WHITE
+        self.current_player = player
         self.board = board_state
 
     @staticmethod
@@ -63,6 +63,14 @@ class Board:
 
     def is_square_empty(self, square):
         return self.get_piece(square) is None
+
+    def is_square_full(self, square):
+        return not self.is_square_empty(square)
+
+    def is_square_attackable(self, square, current_player):
+        if self.is_square_full(square):
+            return self.get_piece(square).player != current_player
+        return False
 
     def find_piece(self, piece_to_find):
         """
