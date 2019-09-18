@@ -46,6 +46,7 @@ class Piece(ABC):
             return True
         return False
 
+
 class Pawn(Piece):
     """
     A class representing a chess pawn.
@@ -122,7 +123,68 @@ class Rook(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        valid_moves = self.move_up_row(board)
+        valid_moves += self.move_down_row(board)
+        valid_moves += self.move_right_col(board)
+        valid_moves += self.move_left_col(board)
+        logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+        return valid_moves
+
+    def move_up_row(self, board):
+        current_square = self.position(board)
+        next_square = Square.at(current_square.row, current_square.col)
+        valid_moves = []
+        while True:
+            next_square = Square.at(next_square.row + 1, next_square.col)
+            if not board.in_bounds(next_square):
+                return valid_moves
+            if board.is_square_empty(next_square):
+                valid_moves.append(next_square)
+            else:
+                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+                return valid_moves
+
+    def move_down_row(self, board):
+        current_square = self.position(board)
+        next_square = Square.at(current_square.row, current_square.col)
+        valid_moves = []
+        while True:
+            next_square = Square.at(next_square.row - 1, next_square.col)
+            if not board.in_bounds(next_square):
+                return valid_moves
+            if board.is_square_empty(next_square):
+                valid_moves.append(next_square)
+            else:
+                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+                return valid_moves
+
+    def move_right_col(self, board):
+        current_square = self.position(board)
+        next_square = Square.at(current_square.row, current_square.col)
+        valid_moves = []
+        while True:
+            next_square = Square.at(next_square.row, next_square.col + 1)
+            if not board.in_bounds(next_square):
+                return valid_moves
+            if board.is_square_empty(next_square):
+                valid_moves.append(next_square)
+            else:
+                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+                return valid_moves
+
+    def move_left_col(self, board):
+        current_square = self.position(board)
+        next_square = Square.at(current_square.row, current_square.col)
+        valid_moves = []
+        while True:
+            next_square = Square.at(next_square.row, next_square.col - 1)
+            if not board.in_bounds(next_square):
+                return valid_moves
+            if board.is_square_empty(next_square):
+                valid_moves.append(next_square)
+            else:
+                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+                return valid_moves
 
 
 class Queen(Piece):

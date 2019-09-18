@@ -1,7 +1,7 @@
 from chessington.engine.board import Board
 from chessington.engine.data import Player, Square
 from chessington.engine.pieces import Pawn
-
+from chessington.engine.pieces import Rook
 
 class TestPawns:
 
@@ -314,9 +314,9 @@ class TestPawns:
         assert Square.at(4, 5) not in moves
 
     @staticmethod
-    def test_black_pawns_can_capture_diagonally():
+    def test_black_pawns_cannot_move_diagonally_except_to_capture():
 
-         # Arrange
+        # Arrange
         board = Board.empty()
         pawn = Pawn(Player.BLACK)
         pawn_square = Square.at(3, 4)
@@ -332,3 +332,134 @@ class TestPawns:
         # Assert
         assert Square.at(2, 3) not in moves
         assert Square.at(2, 5) not in moves
+
+
+class TestRooks:
+
+    @staticmethod
+    def test_white_rooks_can_move_horizontally_right():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.WHITE)
+        square = Square.at(0, 0)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(0, 1) in moves
+        assert Square.at(0, 5) in moves
+
+    @staticmethod
+    def test_white_rooks_can_move_vertically_up():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.WHITE)
+        square = Square.at(0, 0)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(1, 0) in moves
+        assert Square.at(5, 0) in moves
+
+    @staticmethod
+    def test_black_rooks_can_move_horizontally_right():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        square = Square.at(0, 0)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(0, 1) in moves
+        assert Square.at(0, 5) in moves
+
+    @staticmethod
+    def test_black_rooks_can_move_vertically_up():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        square = Square.at(0, 0)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(1, 0) in moves
+        assert Square.at(5, 0) in moves
+
+    @staticmethod
+    def test_white_rooks_can_move_horizontally_left():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.WHITE)
+        square = Square.at(7, 7)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(7, 1) in moves
+        assert Square.at(7, 5) in moves
+
+    @staticmethod
+    def test_white_rooks_can_move_vertically_down():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.WHITE)
+        square = Square.at(7, 7)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(1, 7) in moves
+        assert Square.at(5, 7) in moves
+
+    @staticmethod
+    def test_black_rooks_can_move_horizontally_left():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        square = Square.at(7, 7)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(7, 1) in moves
+        assert Square.at(7, 5) in moves
+
+    @staticmethod
+    def test_black_rooks_can_move_vertically_down():
+
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        square = Square.at(7, 7)
+        board.set_piece(square, rook)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert Square.at(1, 7) in moves
+        assert Square.at(5, 7) in moves

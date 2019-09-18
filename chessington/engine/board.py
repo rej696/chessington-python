@@ -61,6 +61,9 @@ class Board:
         """
         return self.board[square.row][square.col]
 
+    def in_bounds(self, square):
+        return 0 <= square.row <= 7 and 0 <= square.col <= 7
+
     def is_square_empty(self, square):
         return self.get_piece(square) is None
 
