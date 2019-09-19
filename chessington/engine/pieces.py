@@ -46,6 +46,34 @@ class Piece(ABC):
             return True
         return False
 
+    def move_continuous(self, board, vertical_dir, horizontal_dir):
+        current_square = self.position(board)
+        next_square = Square.at(current_square.row, current_square.col)
+        valid_moves = []
+        while True:
+            next_square = Square.at(next_square.row + vertical_dir, next_square.col + horizontal_dir)
+            if not board.in_bounds(next_square):
+                return valid_moves
+            if board.is_square_empty(next_square):
+                valid_moves.append(next_square)
+            elif board.is_square_attackable(next_square, self.player):
+                valid_moves.append(next_square)
+                return valid_moves
+            else:
+                return valid_moves
+
+    def move_single(self, board, vertical_dir, horizontal_dir):
+        current_square = self.position(board)
+        valid_moves = []
+        next_square = Square.at(current_square.row + vertical_dir, current_square.col + horizontal_dir)
+        if not board.in_bounds(next_square):
+            return valid_moves
+        if board.is_square_empty(next_square) or board.is_square_attackable(next_square, self.player):
+            valid_moves.append(next_square)
+            return valid_moves
+        else:
+            return valid_moves
+
 
 class Pawn(Piece):
     """
@@ -105,7 +133,16 @@ class Knight(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        valid_moves = self.move_single(board, 2, 1)
+        valid_moves += self.move_single(board, 2, -1)
+        valid_moves += self.move_single(board, -2, 1)
+        valid_moves += self.move_single(board, -2, -1)
+        valid_moves += self.move_single(board, 1, 2)
+        valid_moves += self.move_single(board, 1, -2)
+        valid_moves += self.move_single(board, -1, 2)
+        valid_moves += self.move_single(board, -1, -2)
+        logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+        return valid_moves
 
 
 class Bishop(Piece):
@@ -114,7 +151,12 @@ class Bishop(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        valid_moves = self.move_continuous(board, 1, 1)
+        valid_moves += self.move_continuous(board, -1, 1)
+        valid_moves += self.move_continuous(board, 1, -1)
+        valid_moves += self.move_continuous(board, -1, -1)
+        logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+        return valid_moves
 
 
 class Rook(Piece):
@@ -123,80 +165,12 @@ class Rook(Piece):
     """
 
     def get_available_moves(self, board):
-        valid_moves = self.move_up_row(board)
-        valid_moves += self.move_down_row(board)
-        valid_moves += self.move_right_col(board)
-        valid_moves += self.move_left_col(board)
+        valid_moves = self.move_continuous(board, 1, 0)
+        valid_moves += self.move_continuous(board, -1, 0)
+        valid_moves += self.move_continuous(board, 0, 1)
+        valid_moves += self.move_continuous(board, 0, -1)
         logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
         return valid_moves
-
-    def move_up_row(self, board):
-        current_square = self.position(board)
-        next_square = Square.at(current_square.row, current_square.col)
-        valid_moves = []
-        while True:
-            next_square = Square.at(next_square.row + 1, next_square.col)
-            if not board.in_bounds(next_square):
-                return valid_moves
-            if board.is_square_empty(next_square):
-                valid_moves.append(next_square)
-            elif board.is_square_attackable(next_square, self.player):
-                valid_moves.append(next_square)
-                return valid_moves
-            else:
-                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
-                return valid_moves
-
-    def move_down_row(self, board):
-        current_square = self.position(board)
-        next_square = Square.at(current_square.row, current_square.col)
-        valid_moves = []
-        while True:
-            next_square = Square.at(next_square.row - 1, next_square.col)
-            if not board.in_bounds(next_square):
-                return valid_moves
-            if board.is_square_empty(next_square):
-                valid_moves.append(next_square)
-            elif board.is_square_attackable(next_square, self.player):
-                valid_moves.append(next_square)
-                return valid_moves
-            else:
-                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
-                return valid_moves
-
-    def move_right_col(self, board):
-        current_square = self.position(board)
-        next_square = Square.at(current_square.row, current_square.col)
-        valid_moves = []
-        while True:
-            next_square = Square.at(next_square.row, next_square.col + 1)
-            if not board.in_bounds(next_square):
-                return valid_moves
-            if board.is_square_empty(next_square):
-                valid_moves.append(next_square)
-            elif board.is_square_attackable(next_square, self.player):
-                valid_moves.append(next_square)
-                return valid_moves
-            else:
-                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
-                return valid_moves
-
-    def move_left_col(self, board):
-        current_square = self.position(board)
-        next_square = Square.at(current_square.row, current_square.col)
-        valid_moves = []
-        while True:
-            next_square = Square.at(next_square.row, next_square.col - 1)
-            if not board.in_bounds(next_square):
-                return valid_moves
-            if board.is_square_empty(next_square):
-                valid_moves.append(next_square)
-            elif board.is_square_attackable(next_square, self.player):
-                valid_moves.append(next_square)
-                return valid_moves
-            else:
-                logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
-                return valid_moves
 
 
 class Queen(Piece):
@@ -205,7 +179,16 @@ class Queen(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        valid_moves = self.move_continuous(board, 1, 0)
+        valid_moves += self.move_continuous(board, -1, 0)
+        valid_moves += self.move_continuous(board, 0, 1)
+        valid_moves += self.move_continuous(board, 0, -1)
+        valid_moves += self.move_continuous(board, 1, 1)
+        valid_moves += self.move_continuous(board, -1, 1)
+        valid_moves += self.move_continuous(board, 1, -1)
+        valid_moves += self.move_continuous(board, -1, -1)
+        logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+        return valid_moves
 
 
 class King(Piece):
@@ -214,4 +197,13 @@ class King(Piece):
     """
 
     def get_available_moves(self, board):
-        return []
+        valid_moves = self.move_single(board, 1, 0)
+        valid_moves += self.move_single(board, -1, 0)
+        valid_moves += self.move_single(board, 0, 1)
+        valid_moves += self.move_single(board, 0, -1)
+        valid_moves += self.move_single(board, 1, 1)
+        valid_moves += self.move_single(board, 1, -1)
+        valid_moves += self.move_single(board, -1, 1)
+        valid_moves += self.move_single(board, -1, -1)
+        logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
+        return valid_moves
