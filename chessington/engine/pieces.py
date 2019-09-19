@@ -102,11 +102,21 @@ class Pawn(Piece):
         return valid_moves
 
     def on_start_row(self, current_square):
-        if current_square.row == 1 or current_square.row == 6:
-            direction = [1, 2] if self.player == Player.WHITE else [-1, -2]
+        if current_square.row == 1 and self.player == Player.WHITE:
+            direction = [1, 2]
+        elif current_square.row == 6 and self.player == Player.BLACK:
+            direction = [-1, -2]
         else:
             direction = [1] if self.player == Player.WHITE else [-1]
         return direction
+
+    def en_passant_attack(self, board, attack_square):
+        if board.last_move_pawn is not None:
+            colour_check = -1 if self.player == Player.WHITE else 1
+            if board.last_move_pawn.col == attack_square.col\
+                    and board.last_move_pawn.row - attack_square.row == colour_check:
+                return True
+        return False
 
     def kill_opponent(self, current_square, board):
         direction_row = 1 if self.player == Player.WHITE else -1
@@ -124,7 +134,10 @@ class Pawn(Piece):
         for attack_square in attack_squares:
             if board.is_square_attackable(attack_square, self.player):
                 valid_attack_squares.append(attack_square)
+            elif self.en_passant_attack(board, attack_square):
+                valid_attack_squares.append(attack_square)
         return valid_attack_squares
+
 
 
 class Knight(Piece):

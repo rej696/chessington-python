@@ -19,6 +19,7 @@ class Board:
     def __init__(self, player, board_state):
         self.current_player = player
         self.board = board_state
+        self.last_move_pawn = None
 
     @staticmethod
     def empty():
@@ -93,4 +94,29 @@ class Board:
         if moving_piece is not None and moving_piece.player == self.current_player:
             self.set_piece(to_square, moving_piece)
             self.set_piece(from_square, None)
+            self.en_passant_deletion(to_square, moving_piece)
+            self.pawn_promotion_check(to_square)
+            self.en_passant_check(from_square, to_square, moving_piece)
             self.current_player = self.current_player.opponent()
+
+    def pawn_promotion_check(self, to_square):
+        piece_to_promote = self.get_piece(to_square)
+        if isinstance(piece_to_promote, Pawn):
+            if piece_to_promote.edge_check_row(to_square):
+                self.set_piece(to_square, Queen(self.current_player))
+
+    def en_passant_check(self, from_square, to_square, moving_piece):
+        if not isinstance(moving_piece, Pawn):
+            self.last_move_pawn = None
+            return
+        if abs(to_square.row - from_square.row) == 2:
+            self.last_move_pawn = Square.at(to_square.row, to_square.col)
+            return
+        self.last_move_pawn = None
+
+    def en_passant_deletion(self, to_square, moving_piece):
+        if not isinstance(moving_piece, Pawn):
+            return
+        if moving_piece.en_passant_attack(self, to_square):
+            self.set_piece(self.last_move_pawn, None)
+

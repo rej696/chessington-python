@@ -2,6 +2,11 @@ from chessington.engine.board import Board
 from chessington.engine.data import Player, Square
 from chessington.engine.pieces import Pawn
 from chessington.engine.pieces import Rook
+from chessington.engine.pieces import King
+from chessington.engine.pieces import Bishop
+from chessington.engine.pieces import Queen
+from chessington.engine.pieces import Knight
+
 
 class TestPawns:
 
@@ -333,6 +338,32 @@ class TestPawns:
         assert Square.at(2, 3) not in moves
         assert Square.at(2, 5) not in moves
 
+    @staticmethod
+    def test_white_pawn_changes_to_queen_when_moved_to_top_of_board():
+        # Arrange
+        board = Board.empty()
+        pawn = Pawn(Player.WHITE)
+        from_square = Square.at(6, 4)
+        to_square = Square.at(7, 4)
+        board.set_piece(from_square, pawn)
+        board.move_piece(from_square, to_square)
+        new_queen = board.get_piece(to_square)
+        # Assert
+        assert isinstance(new_queen, Queen)
+
+    @staticmethod
+    def test_black_pawn_changes_to_queen_when_moved_to_top_of_board():
+        # Arrange
+        board = Board.empty()
+        pawn = Pawn(Player.BLACK)
+        square = Square.at(1, 4)
+        board.set_piece(square, pawn)
+
+        # Act
+        moves = pawn.get_available_moves(board)
+
+        # Assert
+        assert len(moves) == 1
 
 class TestRooks:
 
