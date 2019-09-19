@@ -473,6 +473,36 @@ class TestRooks:
         board.set_piece(rook_square, rook)
 
         obstructing_square1 = Square.at(3, 4)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square1, obstruction)
+
+        obstructing_square2 = Square.at(5, 4)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square2, obstruction)
+
+        obstructing_square3 = Square.at(4, 3)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square3, obstruction)
+
+        obstructing_square3 = Square.at(4, 5)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square3, obstruction)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert len(moves) == 0
+
+    @staticmethod
+    def test_black_rooks_cannot_move_if_piece_in_front():
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        rook_square = Square.at(4, 4)
+        board.set_piece(rook_square, rook)
+
+        obstructing_square1 = Square.at(3, 4)
         obstruction = Pawn(Player.BLACK)
         board.set_piece(obstructing_square1, obstruction)
 
@@ -495,15 +525,15 @@ class TestRooks:
         assert len(moves) == 0
 
     @staticmethod
-    def test_black_rooks_cannot_move_if_piece_in_front():
+    def test_white_rooks_can_take_black_pieces_but_not_white():
         # Arrange
         board = Board.empty()
-        rook = Rook(Player.BLACK)
+        rook = Rook(Player.WHITE)
         rook_square = Square.at(4, 4)
         board.set_piece(rook_square, rook)
 
         obstructing_square1 = Square.at(3, 4)
-        obstruction = Pawn(Player.WHITE)
+        obstruction = Pawn(Player.BLACK)
         board.set_piece(obstructing_square1, obstruction)
 
         obstructing_square2 = Square.at(5, 4)
@@ -515,6 +545,36 @@ class TestRooks:
         board.set_piece(obstructing_square3, obstruction)
 
         obstructing_square3 = Square.at(4, 5)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square3, obstruction)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert len(moves) == 2
+
+    @staticmethod
+    def test_black_rooks_can_take_white_pieces_but_not_black():
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        rook_square = Square.at(4, 4)
+        board.set_piece(rook_square, rook)
+
+        obstructing_square1 = Square.at(3, 4)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square1, obstruction)
+
+        obstructing_square2 = Square.at(5, 4)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square2, obstruction)
+
+        obstructing_square3 = Square.at(4, 3)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square3, obstruction)
+
+        obstructing_square3 = Square.at(4, 5)
         obstruction = Pawn(Player.WHITE)
         board.set_piece(obstructing_square3, obstruction)
 
@@ -522,4 +582,4 @@ class TestRooks:
         moves = rook.get_available_moves(board)
 
         # Assert
-        assert len(moves) == 0
+        assert len(moves) == 2

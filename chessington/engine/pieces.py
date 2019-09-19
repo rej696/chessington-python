@@ -140,6 +140,9 @@ class Rook(Piece):
                 return valid_moves
             if board.is_square_empty(next_square):
                 valid_moves.append(next_square)
+            elif board.is_square_attackable(next_square, self.player):
+                valid_moves.append(next_square)
+                return valid_moves
             else:
                 logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
                 return valid_moves
@@ -154,6 +157,9 @@ class Rook(Piece):
                 return valid_moves
             if board.is_square_empty(next_square):
                 valid_moves.append(next_square)
+            elif board.is_square_attackable(next_square, self.player):
+                valid_moves.append(next_square)
+                return valid_moves
             else:
                 logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
                 return valid_moves
@@ -168,6 +174,9 @@ class Rook(Piece):
                 return valid_moves
             if board.is_square_empty(next_square):
                 valid_moves.append(next_square)
+            elif board.is_square_attackable(next_square, self.player):
+                valid_moves.append(next_square)
+                return valid_moves
             else:
                 logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
                 return valid_moves
@@ -182,6 +191,9 @@ class Rook(Piece):
                 return valid_moves
             if board.is_square_empty(next_square):
                 valid_moves.append(next_square)
+            elif board.is_square_attackable(next_square, self.player):
+                valid_moves.append(next_square)
+                return valid_moves
             else:
                 logging.info(f"{self.player} has {valid_moves} as valid moves for moving into")
                 return valid_moves
