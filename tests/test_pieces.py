@@ -463,3 +463,63 @@ class TestRooks:
         # Assert
         assert Square.at(1, 7) in moves
         assert Square.at(5, 7) in moves
+
+    @staticmethod
+    def test_white_rooks_cannot_move_if_piece_in_front():
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.WHITE)
+        rook_square = Square.at(4, 4)
+        board.set_piece(rook_square, rook)
+
+        obstructing_square1 = Square.at(3, 4)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square1, obstruction)
+
+        obstructing_square2 = Square.at(5, 4)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square2, obstruction)
+
+        obstructing_square3 = Square.at(4, 3)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square3, obstruction)
+
+        obstructing_square3 = Square.at(4, 5)
+        obstruction = Pawn(Player.BLACK)
+        board.set_piece(obstructing_square3, obstruction)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert len(moves) == 0
+
+    @staticmethod
+    def test_black_rooks_cannot_move_if_piece_in_front():
+        # Arrange
+        board = Board.empty()
+        rook = Rook(Player.BLACK)
+        rook_square = Square.at(4, 4)
+        board.set_piece(rook_square, rook)
+
+        obstructing_square1 = Square.at(3, 4)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square1, obstruction)
+
+        obstructing_square2 = Square.at(5, 4)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square2, obstruction)
+
+        obstructing_square3 = Square.at(4, 3)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square3, obstruction)
+
+        obstructing_square3 = Square.at(4, 5)
+        obstruction = Pawn(Player.WHITE)
+        board.set_piece(obstructing_square3, obstruction)
+
+        # Act
+        moves = rook.get_available_moves(board)
+
+        # Assert
+        assert len(moves) == 0
