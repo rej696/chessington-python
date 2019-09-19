@@ -119,4 +119,3 @@ class Board:
             return
         if moving_piece.en_passant_attack(self, to_square):
             self.set_piece(self.last_move_pawn, None)
-

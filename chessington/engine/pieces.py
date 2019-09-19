@@ -139,7 +139,6 @@ class Pawn(Piece):
         return valid_attack_squares
 
 
-
 class Knight(Piece):
     """
     A class representing a chess knight.
