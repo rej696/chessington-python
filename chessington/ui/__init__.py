@@ -9,7 +9,7 @@ import PySimpleGUI as psg
 from chessington.engine.board import Board, BOARD_SIZE
 from chessington.engine.data import Player, Square
 from chessington.engine.pieces import Pawn, Knight, Bishop, Rook, Queen, King
-from chessington.engine.chess_bot_random import ChessBotRandom
+from chessington.engine.chess_bot import ChessBotRandom, ChessBotDefense
 
 IMAGES_BASE_DIRECTORY = 'images'
 
@@ -106,7 +106,7 @@ def play_game():
             """
             insert bot here
             """
-            ChessBotRandom().do_move(board)
+            ChessBotDefense().do_move(board)
 
         # Update the UI
         highlight_squares(window, from_square, to_squares)
