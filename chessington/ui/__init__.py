@@ -9,6 +9,7 @@ import PySimpleGUI as psg
 from chessington.engine.board import Board, BOARD_SIZE
 from chessington.engine.data import Player, Square
 from chessington.engine.pieces import Pawn, Knight, Bishop, Rook, Queen, King
+from chessington.engine.chess_bot_random import ChessBotRandom
 
 IMAGES_BASE_DIRECTORY = 'images'
 
@@ -96,11 +97,16 @@ def play_game():
             from_square, to_squares = None, []
 
     while True:
-
-        # Check for a square being clicked on and react appropriately
-        button, _ = window.Read()
-        if button is not None:
-            handle_click(*button)
+        if board.current_player == Player.WHITE:
+            # Check for a square being clicked on and react appropriately
+            button, _ = window.Read()
+            if button is not None:
+                handle_click(*button)
+        elif board.current_player == Player.BLACK:
+            """
+            insert bot here
+            """
+            ChessBotRandom().do_move(board)
 
         # Update the UI
         highlight_squares(window, from_square, to_squares)
