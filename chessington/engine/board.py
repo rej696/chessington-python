@@ -19,6 +19,8 @@ class Board:
     def __init__(self, player, board_state):
         self.current_player = player
         self.board = board_state
+        self.next_move = None
+        self.value = None
         self.last_move_pawn = None
 
     @staticmethod
