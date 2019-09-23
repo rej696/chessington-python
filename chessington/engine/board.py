@@ -21,6 +21,7 @@ class Board:
         self.board = board_state
         self.next_move = None
         self.value = None
+        self.total_value = None
         self.last_move_pawn = None
 
     @staticmethod

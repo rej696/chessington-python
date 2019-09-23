@@ -101,20 +101,22 @@ class ChessBotDefense:
 
 
 class ChessBotStronk:
-    def __init__(self):
-        pass
+    def __init__(self, player, opponent):
+        self.player = player
+        self.opponent = opponent
 
     def do_smart_move(self, board):
         desired_board_state = self.get_desired_board_state(board)
         from_square = desired_board_state.next_move[0]
         to_square = desired_board_state.next_move[1]
-        board.get_piece(from_square).move_to(board, to_square)
-        """
-        get move from desired board state and apply to actual board 
-        """
+        # board.get_piece(from_square).move_to(board, to_square)
+        return from_square, to_square
 
     def get_desired_board_state(self, board):
         future_board_states = self.get_future_board_states(board)
+        # for future_board_state in future_board_states:
+        #     future_board_states_lvl2 = self.get_future_board_states(future_board_state)
+        #     future_board_state.value += max(future_board_states_lvl2, key=lambda f: f.value).value
         return max(future_board_states, key=lambda f: f.value)
 
     def get_future_board_states(self, board):
@@ -143,12 +145,12 @@ class ChessBotStronk:
         bot_squares = self.get_bot_locations(new_board_state)
         bad_death_squares = self.get_death_squares(new_board_state, enemy_squares)
         good_death_squares = self.get_death_squares(new_board_state, bot_squares)
-        death_square_value = - 2 * self.piece_ranking(new_board_state, bad_death_squares, 100000)
-        death_square_value += self.piece_ranking(new_board_state, good_death_squares, 20)
-        living_pieces_value = - self.piece_ranking(new_board_state, enemy_squares, 20)
-        living_pieces_value += 2 * self.piece_ranking(new_board_state, bot_squares, 20)
+        death_square_value = - 4 * self.piece_ranking(new_board_state, bad_death_squares, 30)
+        death_square_value += 2 * self.piece_ranking(new_board_state, good_death_squares, random.randint(8, 12))
+        living_pieces_value = - 2 * self.piece_ranking(new_board_state, enemy_squares, random.randint(12, 15))
+        living_pieces_value += 4 * self.piece_ranking(new_board_state, bot_squares, 30)
         value = living_pieces_value + death_square_value
-        return value  # TODO
+        return value
 
     def piece_ranking(self, board, squares, check_rank):
         value = 0
@@ -157,26 +159,26 @@ class ChessBotStronk:
             if isinstance(piece, King):
                 value += check_rank
             if isinstance(piece, Queen):
-                value += 10
+                value += random.randint(6, 12)
             if isinstance(piece, Bishop):
-                value += 5
+                value += random.randint(4, 10)
             if isinstance(piece, Knight):
-                value += 5
+                value += random.randint(4, 10)
             if isinstance(piece, Rook):
-                value += 5
+                value += random.randint(4, 10)
             if isinstance(piece, Pawn):
-                value += 1
+                value += random.randint(2, 6)
         return value
 
     def check_valid_piece(self, board, selected_square):
         if board.is_square_empty(selected_square):
             return False
-        return board.get_piece(selected_square).player == Player.BLACK
+        return board.get_piece(selected_square).player == self.player
 
     def check_enemy_piece(self, board, selected_square):
         if board.is_square_empty(selected_square):
             return False
-        return board.get_piece(selected_square).player == Player.WHITE
+        return board.get_piece(selected_square).player == self.opponent
 
     def get_bot_locations(self, board):
         bot_pieces_squares = []

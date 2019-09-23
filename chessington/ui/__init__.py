@@ -5,7 +5,7 @@ A GUI chess board that can be interacted with, and pieces moved around on.
 import os
 
 import PySimpleGUI as psg
-
+import time
 from chessington.engine.board import Board, BOARD_SIZE
 from chessington.engine.data import Player, Square
 from chessington.engine.pieces import Pawn, Knight, Bishop, Rook, Queen, King
@@ -40,7 +40,7 @@ def render_square(board, square):
     return psg.Button('', image_filename=image_file, size=(1, 1), button_color=('white', square_colour), pad=(0, 0), key=key)
 
 def render_board(board):
-    return [[render_square(board, Square.at(row, col)) for col in range(BOARD_SIZE)] for row in range(BOARD_SIZE - 1, -1, -1)]
+    return [[render_square(board, Square.at(row, col)) for col in range(BOARD_SIZE)] for row in range(BOARD_SIZE - 1, -1, -1)] + [[psg.Button("Continue")]]
 
 def update_pieces(window, board):
     for row in range(BOARD_SIZE):
@@ -66,6 +66,8 @@ def highlight_squares(window, from_square, to_squares):
         set_square_colour(window, from_square, FROM_SQUARE_COLOUR)
     for square in to_squares:
         set_square_colour(window, square, TO_SQUARE_COLOUR)
+
+
 
 def play_game():
     psg.ChangeLookAndFeel('GreenTan')
@@ -96,17 +98,58 @@ def play_game():
         else:
             from_square, to_squares = None, []
 
+    # def activate_bot(window, board, , ):
+    #     move = ChessBotStronk().do_smart_move(board)
+    #     handle_click(*move[0])
+    #     highlight_squares(window, from_square, to_squares)
+    #     update_pieces(window, board)
+    #
+    #     button, _ = window.Read()
+    #     if button is not None:
+    #         handle_click(*move[1])
+    #         highlight_squares(window, from_square, to_squares)
+    #         update_pieces(window, board)
+
     while True:
+        counter = 0
         if board.current_player == Player.WHITE:
-            # Check for a square being clicked on and react appropriately
+            '''
+            Bot code
+            '''
+            # player = Player.WHITE
+            # opponent = Player.BLACK
+            # move = ChessBotStronk(player, opponent).do_smart_move(board)
+            # handle_click(*move[0])
+            # highlight_squares(window, from_square, to_squares)
+            # button, _ = window.Read()
+            # if button is not None:
+            #     handle_click(*move[1])
+            #     highlight_squares(window, from_square, to_squares)
+            #     update_pieces(window, board)
+
+            '''
+            Player code
+            '''
             button, _ = window.Read()
             if button is not None:
                 handle_click(*button)
-        elif board.current_player == Player.BLACK:
+            highlight_squares(window, from_square, to_squares)
+            update_pieces(window, board)
+
+        if board.current_player == Player.BLACK:
             """
-            insert bot here
+            Bot code
             """
-            ChessBotStronk().do_smart_move(board)
+            player = Player.BLACK
+            opponent = Player.WHITE
+            move = ChessBotStronk(player, opponent).do_smart_move(board)
+            handle_click(*move[0])
+            highlight_squares(window, from_square, to_squares)
+            button, _ = window.Read()
+            if button is not None:
+                handle_click(*move[1])
+                highlight_squares(window, from_square, to_squares)
+                update_pieces(window, board)
 
         # Update the UI
         highlight_squares(window, from_square, to_squares)
