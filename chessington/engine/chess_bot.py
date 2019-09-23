@@ -1,6 +1,7 @@
 import random
 import copy
 from chessington.engine.data import Player, Square
+from chessington.engine.pieces import Queen, King, Knight, Rook, Bishop, Pawn
 
 
 class ChessBotRandom:
@@ -112,13 +113,6 @@ class ChessBotStronk:
         get move from desired board state and apply to actual board 
         """
 
-    def get_new_board_state(self, board, from_square, to_square):
-        new_board_state = copy.deepcopy(board)
-        new_board_state.next_move = [from_square, to_square]
-        new_board_state.get_piece(from_square).move_to(new_board_state, to_square)
-        new_board_state.value = self.value_assign(new_board_state) + random.random() / 2  # TODO
-        return new_board_state
-
     def get_desired_board_state(self, board):
         future_board_states = self.get_future_board_states(board)
         return max(future_board_states, key=lambda f: f.value)
@@ -133,6 +127,13 @@ class ChessBotStronk:
                 future_board_state_list.append(self.get_new_board_state(board, from_square, to_square))
         return future_board_state_list
 
+    def get_new_board_state(self, board, from_square, to_square):
+        new_board_state = copy.deepcopy(board)
+        new_board_state.next_move = [from_square, to_square]
+        new_board_state.get_piece(from_square).move_to(new_board_state, to_square)
+        new_board_state.value = self.value_assign(new_board_state) + random.random() / 2  # TODO
+        return new_board_state
+
     def value_assign(self, new_board_state):
         """
         assign the value of the new board state by counting if
@@ -142,28 +143,30 @@ class ChessBotStronk:
         bot_squares = self.get_bot_locations(new_board_state)
         bad_death_squares = self.get_death_squares(new_board_state, enemy_squares)
         good_death_squares = self.get_death_squares(new_board_state, bot_squares)
-        value = len(good_death_squares) - 20*len(bad_death_squares) + len(bot_squares) - len(enemy_squares)
+        death_square_value = - 2 * self.piece_ranking(new_board_state, bad_death_squares, 100000)
+        death_square_value += self.piece_ranking(new_board_state, good_death_squares, 20)
+        living_pieces_value = - self.piece_ranking(new_board_state, enemy_squares, 20)
+        living_pieces_value += 2 * self.piece_ranking(new_board_state, bot_squares, 20)
+        value = living_pieces_value + death_square_value
         return value  # TODO
 
-    def do_move(self, board):
-        enemy_pieces_squares = self.get_enemy_locations(board)
-        death_squares = self.get_death_squares(board, enemy_pieces_squares)
-        while True:
-            try:
-                selected_square = self.get_random_square()
-                while not self.check_valid_piece(board, selected_square):
-                    selected_square = self.get_random_square()
-                selected_move = self.random_move(board, selected_square)
-                if not self.check_death_square(death_squares, selected_move):
-                    board.get_piece(selected_square).move_to(board, selected_move)
-                    return
-            except:
-                continue
-
-    def get_random_square(self):
-        random_col = random.choice(range(8))
-        random_row = random.choice(range(8))
-        return Square.at(random_row, random_col)
+    def piece_ranking(self, board, squares, check_rank):
+        value = 0
+        for square in squares:
+            piece = board.get_piece(square)
+            if isinstance(piece, King):
+                value += check_rank
+            if isinstance(piece, Queen):
+                value += 10
+            if isinstance(piece, Bishop):
+                value += 5
+            if isinstance(piece, Knight):
+                value += 5
+            if isinstance(piece, Rook):
+                value += 5
+            if isinstance(piece, Pawn):
+                value += 1
+        return value
 
     def check_valid_piece(self, board, selected_square):
         if board.is_square_empty(selected_square):
@@ -174,11 +177,6 @@ class ChessBotStronk:
         if board.is_square_empty(selected_square):
             return False
         return board.get_piece(selected_square).player == Player.WHITE
-
-    def random_move(self, board, selected_square):
-        current_piece = board.get_piece(selected_square)
-        to_squares = current_piece.get_available_moves(board)
-        return random.choice(to_squares)
 
     def get_bot_locations(self, board):
         bot_pieces_squares = []
