@@ -1,4 +1,5 @@
 import random
+import copy
 from chessington.engine.data import Player, Square
 
 
@@ -104,25 +105,23 @@ class ChessBotStronk:
 
     def do_smart_move(self, board):
         desired_board_state = self.get_desired_board_state(board)
+        from_square = desired_board_state.next_move[0]
+        to_square = desired_board_state.next_move[1]
+        board.get_piece(from_square).move_to(board, to_square)
         """
         get move from desired board state and apply to actual board 
         """
 
     def get_new_board_state(self, board, from_square, to_square):
-        new_board_state = board
+        new_board_state = copy.deepcopy(board)
         new_board_state.next_move = [from_square, to_square]
         new_board_state.get_piece(from_square).move_to(new_board_state, to_square)
-        new_board_state.value = self.value_assign(new_board_state)  # TODO
+        new_board_state.value = self.value_assign(new_board_state) + random.random() / 2  # TODO
         return new_board_state
 
     def get_desired_board_state(self, board):
         future_board_states = self.get_future_board_states(board)
-        largest_board_state_value = 0
-        for board_state in future_board_states:
-            if board_state.value >= largest_board_state_value:
-                largest_board_state_value = board_state.value
-                desired_board_state = board_state
-        return desired_board_state
+        return max(future_board_states, key=lambda f: f.value)
 
     def get_future_board_states(self, board):
         future_board_state_list = []
@@ -134,14 +133,17 @@ class ChessBotStronk:
                 future_board_state_list.append(self.get_new_board_state(board, from_square, to_square))
         return future_board_state_list
 
-
     def value_assign(self, new_board_state):
         """
         assign the value of the new board state by counting if
         a piece is taken by the bot or if pieces can be taken by the player
         """
-        value = new_board_state
-        return value # TODO
+        enemy_squares = self.get_enemy_locations(new_board_state)
+        bot_squares = self.get_bot_locations(new_board_state)
+        bad_death_squares = self.get_death_squares(new_board_state, enemy_squares)
+        good_death_squares = self.get_death_squares(new_board_state, bot_squares)
+        value = len(good_death_squares) - 20*len(bad_death_squares) + len(bot_squares) - len(enemy_squares)
+        return value  # TODO
 
     def do_move(self, board):
         enemy_pieces_squares = self.get_enemy_locations(board)
@@ -188,9 +190,7 @@ class ChessBotStronk:
         return bot_pieces_squares
 
     def get_bot_square_moves(self, board, square):
-        bot_piece_move_squares = []
-        bot_piece_move_squares += board.get_piece(square).get_available_moves(board)
-        return bot_piece_move_squares
+        return board.get_piece(square).get_available_moves(board)
 
     def get_enemy_locations(self, board):
         """
