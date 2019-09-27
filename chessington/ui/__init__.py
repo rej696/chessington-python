@@ -9,7 +9,7 @@ import time
 from chessington.engine.board import Board, BOARD_SIZE
 from chessington.engine.data import Player, Square
 from chessington.engine.pieces import Pawn, Knight, Bishop, Rook, Queen, King
-from chessington.engine.chess_bot import ChessBotRandom, ChessBotDefense, ChessBotStronk
+from chessington.engine.chess_bot import ChessBotRandom, ChessBotDefense, ChessBotStronk, NuChessBotStronk
 
 IMAGES_BASE_DIRECTORY = 'images'
 
@@ -109,32 +109,35 @@ def play_game():
     #         handle_click(*move[1])
     #         highlight_squares(window, from_square, to_squares)
     #         update_pieces(window, board)
-
+    button, _ = window.Read()
     while True:
         counter = 0
         if board.current_player == Player.WHITE:
             '''
             Bot code
             '''
-            # player = Player.WHITE
-            # opponent = Player.BLACK
-            # move = ChessBotStronk(player, opponent).do_smart_move(board)
-            # handle_click(*move[0])
-            # highlight_squares(window, from_square, to_squares)
-            # button, _ = window.Read()
-            # if button is not None:
-            #     handle_click(*move[1])
-            #     highlight_squares(window, from_square, to_squares)
-            #     update_pieces(window, board)
+            player = Player.WHITE
+            opponent = Player.BLACK
+            move = ChessBotStronk(player, opponent).get_move(board)
+            if move is not None:
+                handle_click(*move[0])
+                highlight_squares(window, from_square, to_squares)
+                button, _ = window.Read(timeout=40)
+                # if button is not None:
+                handle_click(*move[1])
+                highlight_squares(window, from_square, to_squares)
+                update_pieces(window, board)
+            else:
+                button, _ = window.Read()
 
             '''
             Player code
             '''
-            button, _ = window.Read()
-            if button is not None:
-                handle_click(*button)
-            highlight_squares(window, from_square, to_squares)
-            update_pieces(window, board)
+            # button, _ = window.Read()
+            # if button is not None:
+            #     handle_click(*button)
+            # highlight_squares(window, from_square, to_squares)
+            # update_pieces(window, board)
 
         if board.current_player == Player.BLACK:
             """
@@ -142,14 +145,17 @@ def play_game():
             """
             player = Player.BLACK
             opponent = Player.WHITE
-            move = ChessBotStronk(player, opponent).do_smart_move(board)
-            handle_click(*move[0])
-            highlight_squares(window, from_square, to_squares)
-            button, _ = window.Read()
-            if button is not None:
+            move = NuChessBotStronk(player, opponent).get_move(board)
+            if move is not None:
+                handle_click(*move[0])
+                highlight_squares(window, from_square, to_squares)
+                button, _ = window.Read(timeout=40)
+                # if button is not None:
                 handle_click(*move[1])
                 highlight_squares(window, from_square, to_squares)
                 update_pieces(window, board)
+            else:
+                button, _ = window.Read()
 
         # Update the UI
         highlight_squares(window, from_square, to_squares)
